@@ -1,0 +1,155 @@
+<!--
+ * Pleo Educational License
+ *
+ * Copyright (c) 2026 Pleo ApS
+ *
+ * This file is provided for **educational and documentation purposes only**.
+ * You may view, copy, and run it for personal or internal learning.
+ * 
+ * **Do NOT use in production.**
+ * Pleo provides no warranty or support for these examples.
+ *
+ * For official API usage and production guidance, see:
+ * https://developers.pleo.io/
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pleo OAuth 2.0 Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h1>Pleo OAuth 2.0 – Visual Flow Dashboard</h1>
+<p style="font-style: italic; color: #555;">
+  This dashboard is for illustration purposes only. It demonstrates the steps developers need to follow to get OAuth 2.0 working in Pleo's Staging environment so you can start testing APIs. 
+  It is bare-bones code and <strong>not intended for production use</strong>. For the full details visit: <a href="https://developers.pleo.io/docs/current/guides/oauth-workflow-guide" target="_blank">OAuth 2.0 Setup Workflow Guide</a> and <a href="https://developers.pleo.io/docs/current/integration-design/auth/oauth/integration-design-auth-oauth-overview" target="_blank"> Integration Design</a> details.
+</p>
+<div class="flow-container flow-grid">
+
+  <!-- Step 1: Full Width -->
+  <div class="flow-step">
+    <div class="flow-title">Step 1: Register OAuth Client</div>
+    <div class="note">
+      Client registration is assumed completed manually in Pleo’s Staging environment.<br>
+      Client Secret must never be exposed to frontend code.<br>
+      Redirect URIs are simplified here for localhost testing.<br>
+      Distinguish <strong>public</strong> vs <strong>confidential</strong> clients.
+    </div>
+    <p>Redirect URIs:</p>
+    <ul>
+      <li>http://localhost:3000/connect</li>
+      <li>http://localhost:3000/oauth/callback</li>
+    </ul>
+    <table>
+      <tr><th>Parameter</th><th>Value</th><th>Source / How generated</th></tr>
+      <tr><td>response_type</td><td>code</td><td>Pleo hardcoded</td></tr>
+      <tr><td>client_id</td><td id="param-client-id"></td><td>Step 1</td></tr>
+      <tr><td>redirect_uri</td><td id="param-redirect-uri"></td><td>Step 1</td></tr>
+      <tr><td>scope</td><td id="param-scope"></td><td>Step 1</td></tr>
+      <tr><td>state</td><td id="param-state"></td><td>Generated server-side</td></tr>
+      <tr><td>code_challenge</td><td id="param-code-challenge"></td><td>Derived from code_verifier</td></tr>
+      <tr><td>code_challenge_method</td><td>S256</td><td>Pleo hardcoded</td></tr>
+    </table>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="flow-step">
+    <div class="flow-title">Step 2: PKCE & Authorisation</div>
+    <div class="note">
+      PKCE and state are generated <strong>server-side</strong> for observability.<br>
+      In real public clients, PKCE must remain client-side. The `state` parameter protects against CSRF attacks.<br>
+      Optional Pleo-specific parameters are omitted here for simplicity.
+    </div>
+    <p>Click the button to generate PKCE values and redirect:</p>
+    <button onclick="startOAuth()">Connect to Pleo</button>
+    <h3>PKCE Generated (Server-side)</h3>
+    <pre id="step2-pkce"></pre>
+    <h3>Redirect Request to Pleo</h3>
+    <pre id="step2-redirect-request"></pre>
+    <h3>Redirect Response from Pleo</h3>
+    <pre id="step2-redirect-response"></pre>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="flow-step">
+    <div class="flow-title">Step 3: Token Exchange</div>
+    <div class="note">
+      Token exchange must be done <strong>server-to-server</strong>.<br>
+      Never expose client_secret or code_verifier to frontend.<br>
+      Authorization codes are single-use and expire quickly.<br>
+      State validation is required for security.
+    </div>
+    <pre id="step3-status">Not started</pre>
+    <h3>Token Exchange Request to Pleo</h3>
+    <pre id="step3-token-request"></pre>
+    <h3>Token Response from Pleo</h3>
+    <pre id="step3-token-response"></pre>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="flow-step">
+    <div class="flow-title">Step 4: Call Pleo API</div>
+    <div class="note">
+      API calls are made <strong>server-side</strong> using the access token.<br>
+      Scope must be validated.<br>
+      All requests must use HTTPS in production.
+    </div>
+    <button onclick="callEmployees()">Call Employees API</button>
+    <h3>API call to Pleo</h3>
+    <pre id="step4-api-request"></pre>
+    <h3>Pleo response</h3>
+    <table id="employeesTable">
+        <thead>
+            <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        </table>
+    <pre id="step4-api-response"></pre>
+   
+  </div>
+
+  <!-- Step 5 -->
+  <div class="flow-step">
+    <div class="flow-title">Step 5: Refresh Tokens</div>
+    <div class="note">
+      Token refresh is triggered automatically when 30 seconds remain for demo purposes.<br>
+      In real integrations, refresh requests must be centralised to avoid race conditions.<br>
+      Refresh tokens are rotated: old tokens may expire after use.<br>
+      If refresh fails, the user must reauthenticate.
+    </div>
+    <p>Expires in: <strong><span id="expires">--</span></strong> seconds
+      <button onclick="refreshToken()">Refresh Token Now</button>
+    </p>
+    <table id="tokensTable">
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>access_token</td><td></td></tr>
+      <tr><td>refresh_token</td><td></td></tr>
+      <tr><td>expires_in</td><td></td></tr>
+      <tr><td>scope</td><td></td></tr>
+    </table>
+  </div>
+
+  <!-- Step 6: Full Width -->
+  <div class="flow-step">
+    <div class="flow-title">Step 6: Handle Token Expiry or Revocation</div>
+    <div class="note">
+      Token revocation/expiry is not fully simulated here.<br>
+      In production, API calls must stop immediately when tokens are invalid.<br>
+      Logging and observability are critical.<br>
+      Reauthentication flow should be explicit and non-destructive.
+    </div>
+    <button onclick="resetState()">Reset OAuth State</button>
+  </div>
+
+</div>
+
+<script src="scripts.js"></script>
+</body>
+</html>

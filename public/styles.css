@@ -1,0 +1,146 @@
+/**
+ * Pleo Educational License
+ *
+ * Copyright (c) 2026 Pleo ApS
+ *
+ * This file is provided for **educational and documentation purposes only**.
+ * You may view, copy, and run it for personal or internal learning.
+ * 
+ * **Do NOT use in production.**
+ * Pleo provides no warranty or support for these examples.
+ *
+ * For official API usage and production guidance, see:
+ * https://developers.pleo.io/
+ */
+/* -------------------- Base Styling -------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* include padding/border in width calculations */
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 20px;
+  background: #f4f6f8;
+  color: #333;
+}
+
+h1 { margin-bottom: 25px; font-size: 2em; color: #222; }
+h2 { margin-top: 25px; font-size: 1.5em; color: #222; }
+h3 { margin-top: 15px; font-size: 1.15em; color: #444; }
+p { line-height: 1.5; margin: 8px 0; }
+ul { margin: 8px 0 12px 20px; padding: 0; }
+
+/* -------------------- Flow Grid -------------------- */
+.flow-container.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+/* Full width steps (e.g., Step 1, Step 6) */
+.flow-step.full-width {
+  grid-column: 1 / -1;
+}
+
+/* -------------------- Flow Step Card -------------------- */
+.flow-step {
+  background: #fff;
+  border: 2px solid #000; /* black border */
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* contain tables/pre blocks */
+}
+
+.flow-step:hover {
+  border-color: #007bff; /* blue on hover */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.flow-title {
+  font-weight: 600;
+  font-size: 1.3em;
+  margin-bottom: 10px;
+}
+
+/* -------------------- Notes -------------------- */
+.note {
+  background: #f0f4f8; /* subtle gray-blue */
+  border-left: 4px solid #007bff; /* blue border */
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+/* -------------------- Pre & Tables -------------------- */
+pre {
+  background: #f7f9fc;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5da;
+  overflow: auto; /* scroll if needed */
+  max-height: 180px;
+  font-size: 0.85em;
+  margin: 6px 0;
+  width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 0.9em;
+  display: block;        /* allows horizontal scroll */
+  overflow-x: auto;      /* scroll if content too wide */
+  margin: 10px 0;
+}
+
+th, td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap; /* prevent content from breaking mid-word */
+}
+
+th {
+  background: #f0f3f6;
+  font-weight: 600;
+}
+
+tr:last-child td { border-bottom: none; }
+
+/* -------------------- Buttons -------------------- */
+button {
+  background: #000; /* black */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin: 4px 0;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background 0.2s ease;
+}
+
+button:hover { background: #007bff; } /* blue hover */
+
+/* -------------------- Responsive -------------------- */
+@media (max-width: 800px) {
+  .flow-container.flow-grid {
+    grid-template-columns: 1fr; /* single column on small screens */
+  }
+
+  body { margin: 15px; }
+  .flow-step { padding: 12px; }
+  pre { max-height: 150px; }
+  button { padding: 5px 10px; font-size: 0.85em; }
+}

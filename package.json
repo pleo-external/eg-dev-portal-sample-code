@@ -1,0 +1,26 @@
+{
+  "name": "pleo-oauth-prototype",
+  "version": "1.0.0",
+  "description": "This is a minimal prototype to test OAuth 2.0 for dev portal docs",
+  "homepage": "https://github.com/celeste-groenewald/pleo-oauth-prototype#readme",
+  "bugs": {
+    "url": "https://github.com/celeste-groenewald/pleo-oauth-prototype/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/celeste-groenewald/pleo-oauth-prototype.git"
+  },
+  "license": "ISC",
+  "author": "Celeste Groenewald",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.5",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1"
+  }
+}
