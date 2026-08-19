@@ -1,0 +1,21 @@
+name: CodeQL
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql:
+    uses: pleo-external/idk-reusable-workflows/.github/workflows/codeql-analysis.yaml@main
+    secrets: inherit
